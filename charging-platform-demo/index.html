@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>东软电动汽车充电桩应用管理平台 Demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <img class="brand-mark" src="./logo-mark.png" alt="电途 Volt Way logo" />
+          <div>
+            <strong>电途 Volt Way</strong>
+            <span>PM 用户端演示原型</span>
+          </div>
+        </div>
+
+        <nav class="main-nav" aria-label="主导航">
+          <button class="nav-item active" data-view="userView" type="button">
+            <span class="nav-symbol">U</span>
+            <span>用户端</span>
+          </button>
+          <button class="nav-item" data-view="pmView" type="button">
+            <span class="nav-symbol">P</span>
+            <span>PM 需求</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-foot">
+          <span>演示数据</span>
+          <strong id="sidebarUpdated">实时同步中</strong>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">东软电动汽车充电桩应用管理平台</p>
+            <h1 id="viewTitle">充电用户端 Demo</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="ghost-btn" id="syncBtn" type="button">刷新模拟数据</button>
+            <button class="ghost-btn" id="resetBtn" type="button">重置演示</button>
+            <button class="primary-btn" id="openPmBtn" type="button">查看 PM 范围</button>
+          </div>
+        </header>
+
+        <section class="view-panel active" id="userView">
+          <div class="user-layout">
+            <section class="phone-frame" aria-label="充电用户端手机原型">
+              <div class="phone-status">
+                <span>09:30</span>
+                <span>Socket 在线</span>
+              </div>
+
+              <section class="phone-screen active" data-phone-screen="login">
+                <div class="login-block">
+                  <div class="app-badge">EV Charge</div>
+                  <h2>手机号登录</h2>
+                  <p>免密登录或手机号+密码注册；不存在时自动创建默认用户。</p>
+                  <div class="login-mode" aria-label="登录方式">
+                    <button class="active" data-login-mode="quick" type="button">免密登录</button>
+                    <button data-login-mode="register" type="button">密码注册</button>
+                  </div>
+                  <label>
+                    手机号
+                    <input id="phoneInput" inputmode="numeric" maxlength="11" value="13800138000" />
+                  </label>
+                  <div class="register-fields" id="registerFields" hidden>
+                    <label>
+                      登录密码
+                      <input id="passwordInput" type="password" value="123456" />
+                    </label>
+                    <label>
+                      验证码
+                      <input id="codeInput" inputmode="numeric" maxlength="6" value="8888" />
+                    </label>
+                  </div>
+                  <button class="primary-btn full" id="loginBtn" type="button">登录/自动注册</button>
+                  <div class="hint-line">接口：verifyUserLogin(phone, user)</div>
+                </div>
+              </section>
+
+              <section class="phone-screen" data-phone-screen="home">
+                <div class="phone-header">
+                  <div>
+                    <strong>附近充电站</strong>
+                    <span id="locationLabel">北京海淀区</span>
+                  </div>
+                  <button class="icon-btn" id="aiRecommendBtn" title="AI 智能推荐" type="button">AI</button>
+                </div>
+
+                <div class="search-row">
+                  <input id="locationInput" value="北京海淀区中关村软件园" aria-label="定位地址" />
+                  <button id="locateBtn" type="button">定位</button>
+                </div>
+                <div class="coordinate-panel" id="coordinatePanel"></div>
+
+                <div class="segmented" role="tablist" aria-label="排序方式">
+                  <button class="active" data-sort="distance" type="button">距离</button>
+                  <button data-sort="price" type="button">价格</button>
+                  <button data-sort="rating" type="button">好评</button>
+                  <button data-sort="ai" type="button">AI</button>
+                </div>
+
+                <div class="mini-map" aria-label="地图站点标记">
+                  <div class="map-road main"></div>
+                  <div class="map-road branch"></div>
+                  <div class="map-pin current" style="left: 48%; top: 55%;">我</div>
+                  <div id="mapPins"></div>
+                </div>
+
+                <div class="station-list" id="stationList"></div>
+
+                <nav class="phone-tabs" aria-label="用户端底部导航">
+                  <button class="active" data-phone-tab="home" type="button">主页</button>
+                  <button data-phone-tab="orders" type="button">订单</button>
+                  <button data-phone-tab="profile" type="button">我的</button>
+                </nav>
+              </section>
+
+              <section class="phone-screen" data-phone-screen="detail">
+                <div class="phone-header">
+                  <button class="text-btn" id="backHomeBtn" type="button">返回</button>
+                  <div>
+                    <strong id="detailName">电站详情</strong>
+                    <span id="detailAddress">站点地址</span>
+                  </div>
+                </div>
+                <div id="stationDetail"></div>
+                <nav class="phone-tabs" aria-label="用户端底部导航">
+                  <button class="active" data-phone-tab="home" type="button">主页</button>
+                  <button data-phone-tab="orders" type="button">订单</button>
+                  <button data-phone-tab="profile" type="button">我的</button>
+                </nav>
+              </section>
+
+              <section class="phone-screen" data-phone-screen="orders">
+                <div class="phone-header">
+                  <div>
+                    <strong>订单管理</strong>
+                    <span>预约 / 充电 / 结算</span>
+                  </div>
+                  <button class="icon-btn" id="scanPileBtn" title="扫码或输入电桩编号" type="button">扫</button>
+                </div>
+                <div id="orderPanel"></div>
+                <nav class="phone-tabs" aria-label="用户端底部导航">
+                  <button data-phone-tab="home" type="button">主页</button>
+                  <button class="active" data-phone-tab="orders" type="button">订单</button>
+                  <button data-phone-tab="profile" type="button">我的</button>
+                </nav>
+              </section>
+
+              <section class="phone-screen" data-phone-screen="profile">
+                <div class="phone-header">
+                  <div>
+                    <strong>我的</strong>
+                    <span>账户与钱包</span>
+                  </div>
+                  <button class="icon-btn" id="logoutBtn" title="退出账号" type="button">出</button>
+                </div>
+                <div id="profilePanel"></div>
+                <nav class="phone-tabs" aria-label="用户端底部导航">
+                  <button data-phone-tab="home" type="button">主页</button>
+                  <button data-phone-tab="orders" type="button">订单</button>
+                  <button class="active" data-phone-tab="profile" type="button">我的</button>
+                </nav>
+              </section>
+            </section>
+
+            <aside class="context-panel">
+              <div class="section-heading">
+                <p class="eyebrow">当前演示链路</p>
+                <h2 id="scenarioTitle">登录与自动注册</h2>
+              </div>
+              <div class="flow-strip" id="flowStrip"></div>
+              <div class="event-log" id="eventLog" aria-live="polite"></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view-panel" id="adminView">
+          <div class="section-heading">
+            <p class="eyebrow">PRL 管理后台联动视图</p>
+            <h2>运营监控与管理</h2>
+          </div>
+          <div class="admin-grid">
+            <div class="kpi-row" id="adminKpis"></div>
+            <section class="admin-section">
+              <div class="section-title-row">
+                <h3>营收趋势</h3>
+                <div class="segmented small">
+                  <button class="active" data-revenue-days="7" type="button">7 日</button>
+                  <button data-revenue-days="30" type="button">30 日</button>
+                </div>
+              </div>
+              <div class="line-chart" id="revenueChart"></div>
+            </section>
+            <section class="admin-section">
+              <div class="section-title-row">
+                <h3>电站管理</h3>
+                <div class="inline-tools">
+                  <input id="stationSearch" placeholder="搜索区域/名称/故障" />
+                  <button data-action="openAddStation" type="button">新增电站</button>
+                </div>
+              </div>
+              <div class="admin-cards" id="adminStations"></div>
+            </section>
+            <section class="admin-section">
+              <div class="section-title-row">
+                <h3>电桩管理</h3>
+                <span class="muted">远程重启 / 紧急断电为模拟指令</span>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>编号</th>
+                      <th>所属电站</th>
+                      <th>类型</th>
+                      <th>功率</th>
+                      <th>状态</th>
+                      <th>累计</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pileTable"></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="admin-section">
+              <div class="section-title-row">
+                <h3>用户管理</h3>
+                <input id="userSearch" placeholder="手机号模糊搜索" />
+              </div>
+              <div class="table-wrap compact">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>用户</th>
+                      <th>手机号</th>
+                      <th>余额</th>
+                      <th>级别</th>
+                      <th>状态</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="userTable"></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="admin-section">
+              <div class="section-title-row">
+                <h3>AI 预警</h3>
+                <span class="danger-text" id="alertCount">0 条</span>
+              </div>
+              <div class="warning-list" id="warningList"></div>
+            </section>
+            <section class="admin-section">
+              <div class="section-title-row">
+                <h3>订单管理</h3>
+                <div class="inline-tools">
+                  <input id="orderSearch" placeholder="订单号/手机号/电站" />
+                  <select id="orderStatusFilter" aria-label="订单状态筛选">
+                    <option value="全部">全部</option>
+                    <option value="进行中">进行中</option>
+                    <option value="待结算">待结算</option>
+                    <option value="已完成">已完成</option>
+                    <option value="预约中">预约中</option>
+                    <option value="已超时">已超时</option>
+                  </select>
+                </div>
+              </div>
+              <div class="table-wrap compact">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>订单</th>
+                      <th>用户</th>
+                      <th>电站</th>
+                      <th>金额</th>
+                      <th>状态</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminOrderTable"></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="admin-section">
+              <div class="section-title-row">
+                <h3>人员管理</h3>
+                <button data-action="mockAdminRequest" type="button">模拟注册申请</button>
+              </div>
+              <div class="warning-list" id="adminRequestList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view-panel" id="screenView">
+          <div class="section-heading">
+            <p class="eyebrow">SCML Web 大屏预览</p>
+            <h2>实时业务健康度看板</h2>
+          </div>
+          <div class="screen-board">
+            <div class="screen-kpis" id="screenKpis"></div>
+            <section class="screen-section wide">
+              <div class="section-title-row">
+                <h3>24h 充电量分布</h3>
+                <span class="muted">时间维度 + 区域热度</span>
+              </div>
+              <div class="heat-grid" id="heatGrid"></div>
+            </section>
+            <section class="screen-section">
+              <h3>营收 TOP 电站</h3>
+              <div class="bar-list" id="topStations"></div>
+            </section>
+            <section class="screen-section">
+              <h3>用户级别分类</h3>
+              <div class="donut-wrap">
+                <div class="donut" id="levelDonut"></div>
+                <div class="legend" id="levelLegend"></div>
+              </div>
+            </section>
+            <section class="screen-section">
+              <h3>AI 预测结果</h3>
+              <div class="prediction-list" id="predictionList"></div>
+            </section>
+            <section class="screen-section">
+              <h3>电池健康等级</h3>
+              <div class="health-bars" id="healthBars"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view-panel" id="apiView">
+          <div class="section-heading">
+            <p class="eyebrow">PE1 数据中心 + PE2 预测链路</p>
+            <h2>接口与数据流</h2>
+          </div>
+          <div class="api-layout">
+            <section class="architecture">
+              <div class="node center">PE1 数据库</div>
+              <div class="node node-pm">PM 用户端</div>
+              <div class="node node-prl">PRL 后台</div>
+              <div class="node node-scml">SCML 大屏</div>
+              <div class="node node-pe2">PE2 机器学习</div>
+              <div class="line pm"></div>
+              <div class="line prl"></div>
+              <div class="line scml"></div>
+              <div class="line pe2"></div>
+              <div class="chain-line"></div>
+            </section>
+            <section class="api-section">
+              <h3>模块间接口函数</h3>
+              <div class="api-list" id="apiList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view-panel" id="pmView">
+          <div class="section-heading">
+            <p class="eyebrow">PM 交付范围拆解</p>
+            <h2>用户端需求理解</h2>
+          </div>
+          <div class="pm-layout">
+            <section class="pm-summary" id="pmSummary"></section>
+            <section class="pm-section">
+              <h3>PM 需求列表</h3>
+              <div class="requirement-list" id="requirementList"></div>
+            </section>
+            <section class="pm-section">
+              <h3>优先级建议</h3>
+              <div class="priority-grid">
+                <div>
+                  <strong>MVP 必须先通</strong>
+                  <p>手机号登录、站点查询、站点详情、订单创建、进行中订单、结算、个人钱包。</p>
+                </div>
+                <div>
+                  <strong>已补齐增强</strong>
+                  <p>预约订单、路线规划弹窗、评价、头像修改、余额支付、多排序策略已在 demo 中可点击演示。</p>
+                </div>
+                <div>
+                  <strong>联调依赖</strong>
+                  <p>PE1 表结构和数据访问接口；PE2 负荷预测结果；PRL 后台状态同步。</p>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="section-title-row">
+          <h3 id="modalTitle">操作</h3>
+          <button class="icon-btn" id="closeModalBtn" title="关闭" type="button">×</button>
+        </div>
+        <div id="modalBody"></div>
+      </section>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
