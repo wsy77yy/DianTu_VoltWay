@@ -1,0 +1,49 @@
+============================================================
+  SCML 大数据可视化大屏 · 部署说明
+============================================================
+
+【文件结构】
+  index.html              大屏入口
+  css/style.css           样式（粉紫深色主题）
+  js/echarts.min.js       ECharts 5.5.1（已本地化，离线可用）
+  js/data.js              数据层（接口地址在这里改）
+  js/app.js               图表渲染逻辑
+  mock_server.py          假后端（9个接口，用于测试/接口契约参考）
+  start.sh                Linux 一键启动脚本
+
+【快速运行（Linux / macOS）】
+  chmod +x start.sh
+  ./start.sh
+  浏览器打开 http://127.0.0.1:8765/index.html
+
+【手动运行】
+  # 终端1：假后端（如果有真实后端可以跳过）
+  python3 mock_server.py
+  # 终端2：静态页面服务
+  python3 -m http.server 8765
+
+【接入真实后端】
+  编辑 js/data.js 顶部第一行：
+    const API_BASE = "http://127.0.0.1:8766";
+  改成你的后端地址即可，图表代码不用改。
+
+【需要后端提供的 9 个接口】
+  GET /api/overview                  核心运营指标
+  GET /api/revenue?days=7|30        营收趋势
+  GET /api/pile-status               电桩状态分布
+  GET /api/charging/24h              24h充电量热力图
+  GET /api/stations/top-revenue?limit=10  营收TOP10
+  GET /api/users/trend               用户趋势（累计+每日新增）
+  GET /api/users/levels              用户级别占比
+  GET /api/stations/health           电池健康等级
+  GET /api/prediction?hours=1|6|24  AI负荷预测
+
+  每个接口的具体返回字段格式，参考 mock_server.py 里的实现，
+  或者直接运行 mock_server.py 后用浏览器访问对应 URL 查看 JSON。
+
+【注意】
+  - 大屏每 30 秒自动轮询一次所有接口。
+  - 如果某个接口挂了，大屏会自动用降级数据，不会白屏；
+    浏览器 F12 → Console 里会打印 "[API] 请求失败"。
+  - 接口返回字段名必须和 mock_server.py 一致，否则大屏拿不到数据。
+============================================================

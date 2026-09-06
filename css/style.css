@@ -1,0 +1,260 @@
+/* =====================================================================
+   东软电动汽车充电桩应用管理平台 · 实时业务健康度大屏
+   深色科技风样式
+   ===================================================================== */
+
+:root {
+  /* 主题色板 —— 粉紫科技风（深色底 + 霓虹粉紫） */
+  --bg: #140b26;                 /* 页面背景（深紫黑） */
+  --bg-glow: rgba(232, 121, 249, 0.07);
+  --panel-bg: rgba(34, 16, 58, 0.55);
+  --panel-border: rgba(232, 121, 249, 0.30);
+  --text-main: #fdf2ff;
+  --text-sub: #a78bb8;
+  --accent: #e879f9;             /* 主强调色（霓虹粉） */
+  --blue: #c084fc;
+  --green: #4ade80;
+  --amber: #fbbf24;
+  --red: #fb7185;
+  --purple: #e879f9;
+  --teal: #22d3ee;
+  --kpi-num: 42px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(1200px 600px at 50% -10%, var(--bg-glow), transparent 60%),
+    var(--bg);
+  color: var(--text-main);
+  overflow-x: hidden;
+}
+
+.screen-wrap {
+  width: 100%;
+  min-width: 1280px;
+  min-height: 100vh;
+  padding: 18px 22px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ==================== 顶部标题栏 ==================== */
+.screen-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 18px;
+  position: relative;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.25);
+}
+.screen-header::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+.header-title h1 {
+  font-size: 26px;
+  letter-spacing: 4px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #f9a8d4, #e879f9 45%, #c084fc 75%, #f472b6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.header-title p {
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--text-sub);
+  margin-top: 2px;
+}
+.header-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.header-meta #clock {
+  font-size: 22px;
+  font-family: "Consolas", monospace;
+  color: var(--accent);
+  font-weight: 700;
+}
+.header-meta #weekday {
+  font-size: 12px;
+  color: var(--text-sub);
+  letter-spacing: 2px;
+}
+
+/* ==================== KPI 指标行 ==================== */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+.kpi-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0;
+  width: 3px; height: 100%;
+  background: var(--accent);
+}
+.kpi-card .kpi-label {
+  font-size: 13px;
+  color: var(--text-sub);
+  letter-spacing: 1px;
+}
+.kpi-card .kpi-value {
+  font-size: var(--kpi-num);
+  font-weight: 700;
+  color: #eafcff;
+  margin-top: 2px;
+  font-family: "Consolas", monospace;
+}
+.kpi-card .kpi-value small {
+  font-size: 16px;
+  color: var(--text-sub);
+}
+.kpi-card .kpi-mom {
+  font-size: 13px;
+  margin-top: 4px;
+  font-family: "Consolas", monospace;
+}
+.kpi-card .kpi-mom.up   { color: var(--green); }
+.kpi-card .kpi-mom.down { color: var(--red); }
+.kpi-card .kpi-mom.flat { color: var(--text-sub); }
+
+/* ==================== 图表主体区（三列栅格） ==================== */
+.board {
+  display: grid;
+  grid-template-columns: 24% 52% 24%;
+  gap: 14px;
+  flex: 1;
+}
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* 面板公共样式 */
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.panel-head h2 {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #eafcff;
+  position: relative;
+  padding-left: 12px;
+}
+.panel-head h2::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 4px; height: 16px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+.panel-head .tag {
+  font-size: 11px;
+  color: var(--text-sub);
+  letter-spacing: 1px;
+}
+.chart-box {
+  flex: 1;
+  min-height: 220px;
+  width: 100%;
+}
+.chart-box.heat { min-height: 300px; }
+
+/* 分段切换按钮（营收 7/30、预测 1/6/24） */
+.seg {
+  display: flex;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.seg button {
+  background: transparent;
+  border: none;
+  color: var(--text-sub);
+  font-size: 12px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.seg button.active {
+  background: rgba(0, 212, 255, 0.18);
+  color: var(--accent);
+}
+
+/* ==================== 底部状态栏 ==================== */
+.screen-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-sub);
+  border-top: 1px solid rgba(0, 212, 255, 0.2);
+  padding-top: 8px;
+}
+.screen-footer .status-left { display: flex; align-items: center; gap: 8px; }
+.screen-footer .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: blink 1.4s infinite;
+}
+.screen-footer b { color: var(--accent); }
+.screen-footer button {
+  background: rgba(0, 212, 255, 0.15);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 3px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: all 0.2s;
+}
+.screen-footer button:hover { background: rgba(0, 212, 255, 0.3); }
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}

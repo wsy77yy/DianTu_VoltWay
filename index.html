@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>东软电动汽车充电桩应用管理平台 · 实时业务健康度大屏</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div class="screen-wrap">
+
+    <!-- ==================== 顶部标题栏 ==================== -->
+    <header class="screen-header">
+      <div class="header-title">
+        <h1>东软电动汽车充电桩应用管理平台</h1>
+        <p>REAL-TIME BUSINESS HEALTH DASHBOARD · 实时业务健康度大屏</p>
+      </div>
+      <div class="header-meta">
+        <span id="clock">--:--:--</span>
+        <span id="weekday">---</span>
+      </div>
+    </header>
+
+    <!-- ==================== 核心运营指标（需求 #58） ==================== -->
+    <section class="kpi-row" id="kpiRow">
+      <!-- 5 个 KPI 卡片由 app.js 动态渲染 -->
+    </section>
+
+    <!-- ==================== 图表主体区 ==================== -->
+    <main class="board">
+
+      <!-- 左列 -->
+      <div class="col col-left">
+        <!-- 营收趋势折线（需求 #56/#57，对应 qryRevenueStat） -->
+        <section class="panel">
+          <div class="panel-head">
+            <h2>营收趋势</h2>
+            <div class="seg" id="revenueSeg">
+              <button class="active" data-days="7">近7日</button>
+              <button data-days="30">近30日</button>
+            </div>
+          </div>
+          <div class="chart-box" id="revenueChart"></div>
+        </section>
+
+        <!-- 电桩状态分布（需求 #56，对应 qryPileStatus） -->
+        <section class="panel">
+          <div class="panel-head">
+            <h2>电桩状态分布</h2>
+            <span class="tag">在用 / 闲置 / 故障</span>
+          </div>
+          <div class="chart-box" id="pileStatusChart"></div>
+        </section>
+
+        <!-- 用户级别分类占比（需求 #59，环形饼图） -->
+        <section class="panel">
+          <div class="panel-head">
+            <h2>用户级别分类</h2>
+            <span class="tag">普通 / 银卡 / 金卡 / 钻石</span>
+          </div>
+          <div class="chart-box" id="levelChart"></div>
+        </section>
+      </div>
+
+      <!-- 中列（宽度最大） -->
+      <div class="col col-center">
+        <!-- 24h 充电量分布热力图（需求 #60，时间 × 区域） -->
+        <section class="panel">
+          <div class="panel-head">
+            <h2>24h 充电量分布</h2>
+            <span class="tag">时间维度 × 区域维度</span>
+          </div>
+          <div class="chart-box heat" id="heatChart"></div>
+        </section>
+
+        <!-- AI 负荷预测（需求 #63，对应 qryLoadPred，含高峰预警标注） -->
+        <section class="panel">
+          <div class="panel-head">
+            <h2>AI 充电负荷预测</h2>
+            <div class="seg" id="predSeg">
+              <button class="active" data-hours="1">1h</button>
+              <button data-hours="6">6h</button>
+              <button data-hours="24">24h</button>
+            </div>
+          </div>
+          <div class="chart-box" id="predChart"></div>
+        </section>
+      </div>
+
+      <!-- 右列 -->
+      <div class="col col-right">
+        <!-- 营收 TOP10 电站（需求 #62，横向柱状图） -->
+        <section class="panel">
+          <div class="panel-head">
+            <h2>营收 TOP10 电站</h2>
+            <span class="tag">本月</span>
+          </div>
+          <div class="chart-box" id="topStationChart"></div>
+        </section>
+
+        <!-- 用户分析：累计用户趋势 + 每日新增（需求 #59，双轴图） -->
+        <section class="panel">
+          <div class="panel-head">
+            <h2>用户分析</h2>
+            <span class="tag">累计用户 / 每日新增</span>
+          </div>
+          <div class="chart-box" id="userChart"></div>
+        </section>
+
+        <!-- 电池健康等级分布（需求 #61，横向条形图） -->
+        <section class="panel">
+          <div class="panel-head">
+            <h2>电池健康等级分布</h2>
+            <span class="tag">优秀 / 良好 / 一般 / 差</span>
+          </div>
+          <div class="chart-box" id="healthChart"></div>
+        </section>
+      </div>
+
+    </main>
+
+    <!-- ==================== 底部状态栏 ==================== -->
+    <footer class="screen-footer">
+      <div class="status-left">
+        <span class="dot"></span>
+        <span>数据链路：SCML 大屏 ← HTTP API 定时轮询 ← PE1 数据库 / PE2 机器学习</span>
+      </div>
+      <div class="status-right">
+        <span>数据更新时间：<b id="updateTime">--</b></span>
+        <button id="refreshBtn" type="button">立即刷新</button>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- 引入 ECharts（本地文件，离线可用；也可替换为 CDN 地址） -->
+  <script src="./js/echarts.min.js"></script>
+  <!-- 模拟数据层（后续替换为真实 fetch 请求） -->
+  <script src="./js/data.js"></script>
+  <!-- 大屏渲染逻辑 -->
+  <script src="./js/app.js"></script>
+</body>
+</html>
