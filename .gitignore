@@ -1,0 +1,23 @@
+# Qt / qmake build files
+build/
+debug/
+release/
+*.o
+*.obj
+*.exe
+*.dll
+*.a
+*.so
+*.log
+
+# Qt Creator
+.qtcreator/
+.qmake.stash
+
+# VS Code
+.vscode/
+
+# qmake generated Makefiles
+Makefile
+Makefile.Debug
+Makefile.Release
